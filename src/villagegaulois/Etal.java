@@ -4,7 +4,7 @@ import personnages.Gaulois;
 
 public class Etal {
 	private Gaulois vendeur;
-	private String produit;
+	private String produit = "";
 	private int quantiteDebutMarche;
 	private int quantite;
 	private boolean etalOccupe = false;
@@ -16,7 +16,7 @@ public class Etal {
 	public Gaulois getVendeur() {
 		return vendeur;
 	}
-
+	
 	public void occuperEtal(Gaulois vendeur, String produit, int quantite) {
 		this.vendeur = vendeur;
 		this.produit = produit;
@@ -27,6 +27,7 @@ public class Etal {
 
 	public String libererEtal() {
 		etalOccupe = false;
+		try {
 		StringBuilder chaine = new StringBuilder(
 				"Le vendeur " + vendeur.getNom() + " quitte son Ã©tal, ");
 		int produitVendu = quantiteDebutMarche - quantite;
@@ -37,6 +38,11 @@ public class Etal {
 			chaine.append("il n'a malheureusement rien vendu.\n");
 		}
 		return chaine.toString();
+	}catch(Exception e){
+		
+		e.printStackTrace();
+		return null;
+		}
 	}
 
 	public String afficherEtal() {
@@ -48,8 +54,14 @@ public class Etal {
 	}
 
 	public String acheterProduit(int quantiteAcheter, Gaulois acheteur) {
-		if (etalOccupe) {
-			StringBuilder chaine = new StringBuilder();
+		if (quantiteAcheter<0) {
+			throw new IllegalArgumentException("La quantité doit être positive.");
+			}
+		if (!etalOccupe) {
+			throw new IllegalStateException("L'etal n'est pas occupé");
+		}
+		StringBuilder chaine = new StringBuilder();
+		try {
 			chaine.append(acheteur.getNom() + " veut acheter " + quantiteAcheter
 					+ " " + produit + " Ã  " + vendeur.getNom());
 			if (quantite == 0) {
@@ -70,8 +82,11 @@ public class Etal {
 						+ vendeur.getNom() + "\n");
 			}
 			return chaine.toString();
-		}
-		return null;
+		}catch (NullPointerException e) {
+				e.printStackTrace();
+				return null;
+				}
+		
 	}
 
 	public boolean contientProduit(String produit) {
